@@ -3,7 +3,7 @@ from fetch_projects import fetch_projects
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/projects')
 def projects():
     repos = fetch_projects()
 
