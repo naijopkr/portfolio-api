@@ -1,5 +1,6 @@
 import requests as req
 import json
+import os
 
 from utils import get_prop
 
@@ -18,13 +19,14 @@ def map_projects(repo: dict):
         id = repo.get('id'),
         name = repo.get('name'),
         publlished_on = dict(github = repo.get('url')),
+        description = repo.get('description'),
         language = language,
         topics = topics,
-        updated_at = repo.get('updated_at')
+        updated_at = repo.get('updatedAt')
     )
 
 def fetch_projects():
-    token = '3f3b718fe7b4ab69451836d7b8fac85023afc19c'
+    token = os.getenv('GITHUB_TOKEN')
     url = 'https://api.github.com/graphql'
     query = """query {
     viewer {
