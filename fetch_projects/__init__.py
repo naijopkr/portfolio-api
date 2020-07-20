@@ -11,6 +11,14 @@ BLACK_LIST = [
     'islr-labs'
 ]
 
+lang_switcher = {
+    'open-quizz': 'JavaScript',
+    'video-info': 'JavaScript',
+    'javascript-counter': 'JavaScript',
+    'islr-conceptual': 'R',
+    'data-science-exercise': 'Python',
+}
+
 def map_topics(topic: dict):
     return get_prop(['topic', 'name'], topic)
 
@@ -19,7 +27,11 @@ def map_projects(repo: dict):
     if (repo.get('isFork') or repo.get('name') in BLACK_LIST):
         return None
 
-    language = get_prop(['primaryLanguage', 'name'], repo)
+    repo_name = repo.get('name')
+
+    language = lang_switcher.get(repo_name, get_prop(['primaryLanguage', 'name'], repo))
+
+
     topics = list(map(
         map_topics,
         get_prop(['repositoryTopics', 'nodes'], repo)
@@ -27,8 +39,8 @@ def map_projects(repo: dict):
 
     return dict(
         id = repo.get('id'),
-        name = repo.get('name'),
-        publlished_on = dict(github = repo.get('url')),
+        name = repo_name,
+        published_on = dict(github = repo.get('url')),
         description = repo.get('description'),
         language = language,
         topics = topics,
@@ -78,4 +90,6 @@ def fetch_projects():
     if not projects_list:
         return []
 
-    return list(map(map_projects, projects_list))
+    mapped_projects = list(map(map_projects, projects_list))
+    valid_projects = list(filter(lambda x: x, mapped_projects))
+    return valid_projects
